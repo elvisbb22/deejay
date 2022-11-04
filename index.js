@@ -1,13 +1,13 @@
-const addZero = (num) => num < 10 ? '0' + num : num;
+const addZero = (num) => num.toString().padStart(2, '0');
 
 const today = new Date();
-console.log(today.getDate());
+// console.log(today.getDate());
 const day = addZero(today.getDate());
 const todayStr = `${today.getFullYear()}/${today.getMonth() + 1}/${day}`;
 const todayStrNoSlash = `${today.getFullYear()}${today.getMonth() + 1}${day}`;
 
 
-console.log('day', day);
+// console.log('day', day, todayStr);
 upateDiv(
     'oggi-djki',
     todayStr,
@@ -37,40 +37,49 @@ const days = [
     '-7',
 ]
 
+function getDate(number) {
+
+    let d = today.getTime() - (number * 1000 * 60 * 60 * 24);
+    // console.log(number, d, new Date(d).toISOString(), 'getDate');
+
+    return new Date(d).toISOString().split('T')[0];
+
+}
 days.forEach(function (day, i) {
 
     const mapp = {
-        'oggi': today.getDate(),
-        '-1': today.getDate() - 1,
-        '-2': today.getDate() - 2,
-        '-3': today.getDate() - 3,
-        '-4': today.getDate() - 4,
-        '-5': today.getDate() - 5,
-        '-6': today.getDate() - 6,
-        '-7': today.getDate() - 7,
+        'oggi': getDate(0),
+        '-1': getDate(1),
+        '-2': getDate(2),
+        '-3': getDate(3),
+        '-4': getDate(4),
+        '-5': getDate(5),
+        '-6': getDate(6),
+        '-7': getDate(7),
 
     }
 
     const dayNumber = mapp[day];
 
-    console.log('dayNumber', dayNumber);
+    // console.log('dayNumber', dayNumber);
+    const dayWe = (new Date(dayNumber)).getUTCDay();
+    console.log(dayWe, 'dayWe', dayNumber);
 
     const month = today.getMonth() + 1;
     const todayStr = `${today.getFullYear()}/${addZero(month)}/${addZero(dayNumber)}`;
     const todayStrNoSlash = `${today.getFullYear()}${addZero(month)}${addZero(dayNumber)}`;
     progrs.forEach(function (item, i) {
-        console.log(item);
+        // console.log(item);
 
 
-        const dayWe = (new Date(todayStr)).getUTCDay();
 
         upateDiv(
             `${day}-${item.k}`,
-            todayStr,
-            todayStrNoSlash,
+            dayNumber.replaceAll('-', '/'),
+            dayNumber.replaceAll('-', ''),
             item.file,
-            dayNumber,
-            dayWe === 6 || dayWe === 5
+            dayNumber.split('-')[2],
+            dayWe === 6 || dayWe === 0
         )
     });
 
@@ -79,7 +88,12 @@ days.forEach(function (day, i) {
 
 function upateDiv(id, date1, date2, progr, num, weekend) {
 
-    const href = `https://media.deejay.it/${date1}/episodes/${progr}/${progr}-${date2}.mp3`
+    let href = `https://media.deejay.it/${date1}/episodes/${progr}/${progr}-${date2}.mp3`
+
+    console.log(progr);
+    if (progr === 'deejay_time') {
+        href = `https://media.m2o.it/${date1}/episodes/deejay-time/deejay-time_${date2}_140000.mp3`;
+    }
     document.getElementById(id).href = href;
     document.getElementById(id).text = num;
     if (weekend) {
